@@ -237,21 +237,20 @@ void loop()
                 response.toString(Serial, true);
                 Serial.println();
 
-                Serial.println("\nGet spreadsheet values...");
-                Serial.println("------------------------------");
-
-                success = GSheet.values.get(&response /* returned response */, spreadsheetId /* spreadsheet Id to read */, "Sheet1!G1:I3" /* range to read */);
-                if (success)
-                    response.toString(Serial, true);
-                else
-                    Serial.println(GSheet.errorReason());
+                
+                FirebaseJsonData contagem;
+                FirebaseJsonArray data;
+                //lendo contagem
+                success = GSheet.values.get(&response /* returned response */, spreadsheetId /* spreadsheet Id to read */, "Sheet1!E2" /* range to read */);
+                response.toString(Serial, true);
+                response.get(contagem, "values/[0]/[0]");
+                                
+                Serial.print(contagem.floatValue);
+                
                 Serial.println();
 
-#if defined(ESP32) || defined(ESP8266)
+                Serial.print("Free heap: ");
                 Serial.println(ESP.getFreeHeap());
-#elif defined(PICO_RP2040)
-                Serial.println(rp2040.getFreeHeap());
-#endif
             }
         }
 
