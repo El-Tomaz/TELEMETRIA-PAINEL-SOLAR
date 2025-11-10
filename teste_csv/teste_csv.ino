@@ -173,18 +173,17 @@ void loop()
 
         // For Google Sheet API ref doc, go to https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/create
 
-        success = GSheet.create(&response /* returned response */, &spreadsheet /* spreadsheet object */, USER_EMAIL /* your email that this spreadsheet shared to */);
+        /*
+        success = GSheet.create(&response /* returned response , &spreadsheet /* spreadsheet object , USER_EMAIL /* your email that this spreadsheet shared to );
         response.toString(Serial, true);
         Serial.println();
-
-        if (success)
+        */
+        if (true)
         {
 
             // Get the spreadsheet id from already created file.
             FirebaseJsonData result;
-            response.get(result, FPSTR("spreadsheetId")); // parse or deserialize the JSON response
-            if (result.success)
-                spreadsheetId = result.to<const char *>();
+            spreadsheetId = "1NmjGE4v5qciEfXUvMa5JWOf9_-ou0Kc85wLm7AdnTHg";
 
             // Get the spreadsheet URL.
             result.clear();
@@ -222,24 +221,7 @@ void loop()
             response.toString(Serial, true);
             Serial.println();
 
-            Serial.println("\nUpdate spreadsheet values...");
-            Serial.println("------------------------------");
 
-            valueRange.clear();
-
-            valueRange.add("range", "Sheet1!G1:I3");
-            valueRange.add("majorDimension", "ROWS");
-            valueRange.set("values/[0]/[0]", "G1"); // row 1/column 7
-            valueRange.set("values/[1]/[0]", "G2"); // row 2/column 7
-            valueRange.set("values/[2]/[0]", "G3"); // row 3/column 7
-            valueRange.set("values/[0]/[1]", "H1"); // row 1/column 8
-            valueRange.set("values/[1]/[1]", "H2"); // row 2/column 8
-            valueRange.set("values/[2]/[1]", "H3"); // row 3/column 8
-            valueRange.set("values/[0]/[2]", "I1"); // row 1/column 9
-            valueRange.set("values/[1]/[2]", "I2"); // row 2/column 9
-            valueRange.set("values/[2]/[2]", "I3"); // row 3/column 9
-
-            success = GSheet.values.update(&response /* returned response */, spreadsheetId /* spreadsheet Id to update */, "Sheet1!G1:I3" /* range to update */, &valueRange /* data to update */);
             response.toString(Serial, true);
             Serial.println();
 
