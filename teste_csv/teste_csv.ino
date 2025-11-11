@@ -1,42 +1,38 @@
-
-/**
- * Created by K. Suwatchai (Mobizt)
- *
- * Email: suwatchai@outlook.com
- *
- * Github: https://github.com/mobizt
- *
- * Copyright (c) 2023 mobizt
- *
- */
-
-// This example shows how to create the spreadsheet, update and read the values.
-
 #include <Arduino.h>
 #include <WiFi.h>
 #include "esp_sntp.h"
 #include "esp_netif_sntp.h"
+#include "time.h"
+
 #include <freertos/task.h>
+
 #include <ESP_Google_Sheet_Client.h>
 
-// For SD/SD_MMC mounting helper
-#include <GS_SDHelper.h>
-
-#include "time.h"
+#include "max6675.h"
 // parametros de wifi e api do google planilhas
 #include "config.h"
 
-bool taskComplete = false;
-uint count = 0;
-bool ready = false;
+// hardware mapping
+#define tpDO 19
+#define tpCLK 5
+
+#define tpCS1 18
+
+#define tpNUMBER 1 //number of thermocouples used 
+
+MAX6675 thermocouples[tpNUMBER] = {MAX6675(tpCLK, tpCS1,tpDO)};
+
 struct tm timeinfo;
-  FirebaseJson valueRange;
-  FirebaseJson response;
 void tokenStatusCallback(TokenInfo info);
+
 
 void send_data(void *pv) {
   time_t now;
+  bool ready = false;
   char horario[9];
+  FirebaseJson valueRange;
+  FirebaseJson response;
+
   while (true) {
     ready = GSheet.ready();
     if (ready) {
@@ -49,10 +45,13 @@ void send_data(void *pv) {
       Serial.println(horario);
       valueRange.add("majorDimension", "COLUMNS");
       valueRange.set("values/[0]/[0]", horario);
-      valueRange.set("values/[1]/[0]", String(count + 1));  // column 1/row 1
-      valueRange.set("values/[2]/[0]", String(2 * count));
 
-      count = count + 1;
+      for(int i = 0; i < tpNUMBER; i++){
+        char key[16] = "";
+        snprintf(key, 16, "values/[%d]/[0]", i+ 1);
+        valueRange.set(key, String(thermocouples[i].readCelsius()));
+      }
+
       bool success = GSheet.values.append(&response /* returned response */, spreadsheetId /* spreadsheet Id to update */, "Sheet1!A1" /* range to update */, &valueRange /* data to update */);
 
       response.toString(Serial, true);
