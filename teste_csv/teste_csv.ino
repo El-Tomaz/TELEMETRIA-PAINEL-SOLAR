@@ -51,7 +51,7 @@ void read_temp(void *pv) {
       Serial.println("read_temp> erro: Falha ao colocar item na Queue");
     }
 
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
 
@@ -68,7 +68,7 @@ void send_data(void *pv) {
     char horario[9];
     if (ready) {
 
-      if (xQueueReceive(dados, (void *)&item, pdMS_TO_TICKS(100)) != pdPASS) {
+      if (xQueueReceive(dados, (void *)&item, pdMS_TO_TICKS(1000)) != pdPASS) {
         Serial.println("Falha ao receber dados!");
       } else {
         tm timeinfo = item.time;
