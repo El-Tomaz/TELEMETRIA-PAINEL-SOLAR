@@ -54,22 +54,21 @@ void setup() {
   node.begin(1, Serial1);
   node.preTransmission(preTransmission);
   node.postTransmission(posTransmission);
-
 }
 
 
 void loop() {
 
   uint8_t result = node.readHoldingRegisters(0,1);
-    delay (1000);
 
-  Serial.println(result);
+
   // do something with data if read is successful
   if (result == node.ku8MBSuccess) {
    Serial.println("deu bom!!");
 
-   Serial.println(((uint8_t) node.getResponseBuffer(0)));
-  }else{
-    Serial.println("deu ruim!!");
+   Serial.print(((uint8_t) node.getResponseBuffer(0)) * 0.21739);
+   Serial.println(" W/m²");
+  }if(result == node.ku8MBResponseTimedOut){
+    Serial.println("MODBUS TIMOUT!!");
   }
 }
